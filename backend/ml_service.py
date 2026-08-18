@@ -319,8 +319,45 @@ class MLService:
         rgb_img = self.decode_image(image_bytes)
         img_h, img_w, _ = rgb_img.shape
 
+        # Check input dimensions: images with minor dimension < 4 cannot contain vehicles or persons
+        min_dim = min(img_h, img_w)
+        max_dim = max(img_h, img_w)
+        if min_dim < 4:
+            elapsed_ms = round((time.time() - start_time) * 1000.0, 1)
+            return {
+                "status": "success",
+                "success": True,
+                "person_count": 0,
+                "vehicle_count": 0,
+                "car_color": None,
+                "plate_number": None,
+                "bounding_boxes": [],
+                "vehicles": [],
+                "persons": [],
+                "detections": [],
+                "summary": {
+                    "vehicle_count": 0,
+                    "person_count": 0,
+                    "license_plates": [],
+                    "dominant_colors": []
+                },
+                "processing_time_ms": elapsed_ms
+            }
+
+        # Safe canvas padding for micro dimensions or extreme aspect ratios to prevent OpenCV resize crash in YOLO letterbox
+        aspect_ratio = max_dim / max(min_dim, 1)
+        if min_dim < 32 or aspect_ratio > 50:
+            target_min = max(64, int(np.ceil(max_dim / 20)))
+            pad_h = max(img_h, target_min)
+            pad_w = max(img_w, target_min)
+            canvas = np.full((pad_h, pad_w, 3), 114, dtype=rgb_img.dtype)
+            canvas[:img_h, :img_w] = rgb_img
+            yolo_input = canvas
+        else:
+            yolo_input = rgb_img
+
         # Run YOLOv8 detection
-        results = self._yolo.predict(source=rgb_img, conf=0.25, verbose=False)
+        results = self._yolo.predict(source=yolo_input, conf=0.25, verbose=False)
 
         vehicles: List[Dict[str, Any]] = []
         persons: List[Dict[str, Any]] = []
@@ -334,11 +371,14 @@ class MLService:
                 conf = round(float(box.conf[0].item()), 3)
                 xyxy = box.xyxy[0].tolist()
 
-                # Clamp bounding box coordinates
+                # Clamp bounding box coordinates to original unpadded image boundaries
                 x1 = max(0, min(int(round(xyxy[0])), img_w - 1))
                 y1 = max(0, min(int(round(xyxy[1])), img_h - 1))
                 x2 = max(0, min(int(round(xyxy[2])), img_w))
                 y2 = max(0, min(int(round(xyxy[3])), img_h))
+
+                if x2 <= x1 or y2 <= y1:
+                    continue
 
                 box_coords = [x1, y1, x2, y2]
 
