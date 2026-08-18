@@ -1,0 +1,359 @@
+/* ==========================================================================
+   AutoDetect POC — Modern Mobile-First PWA Styling
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0f172a;       /* Slate 900 */
+  --bg-surface: #1e293b;       /* Slate 800 */
+  --bg-surface-elevated: #334155; /* Slate 700 */
+  --bg-code: #020617;          /* Slate 950 */
+  
+  --color-vehicle: #06b6d4;     /* Cyan 500 */
+  --color-person: #10b981;      /* Emerald 500 */
+  --color-plate: #f59e0b;       /* Amber 500 */
+  --color-danger: #ef4444;      /* Red 500 */
+  --color-accent: #38bdf8;      /* Sky 400 */
+  
+  --text-primary: #f8fafc;     /* Slate 50 */
+  --text-secondary: #94a3b8;   /* Slate 400 */
+  --text-accent: #38bdf8;      /* Sky 400 */
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 540px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px 24px;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   Header & Status Bar
+   ========================================================================== */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-icon {
+  font-size: 1.4rem;
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-status {
+  display: flex;
+  gap: 6px;
+}
+
+.status-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--bg-surface-elevated);
+}
+
+.status-online { color: #4ade80; }
+.status-latency { color: #38bdf8; }
+
+/* ==========================================================================
+   Camera Viewport & Canvas Overlay
+   ========================================================================== */
+.viewport-wrapper {
+  width: 100%;
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--bg-surface-elevated);
+}
+
+#camera-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.scanning-reticle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+  box-shadow: 0 0 8px #38bdf8;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.scanning-reticle.active {
+  opacity: 1;
+  animation: scan-pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes scan-pulse {
+  0% { top: 5%; }
+  100% { top: 95%; }
+}
+
+.camera-alert {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.90);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  z-index: 20;
+}
+
+.camera-alert.hidden { display: none; }
+
+/* ==========================================================================
+   Summary HUD Metrics
+   ========================================================================== */
+.summary-hud {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.metric-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--bg-surface-elevated);
+  border-radius: var(--radius-md);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.metric-icon { font-size: 1.1rem; }
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.metric-label {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.metric-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-text {
+  font-size: 0.72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ==========================================================================
+   Buttons & Controls Panel
+   ========================================================================== */
+.controls-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  flex: 1;
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  user-select: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: #fff;
+}
+.btn-primary:hover { background-color: #2563eb; }
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--bg-surface-elevated);
+}
+.btn-secondary:hover { background-color: var(--bg-surface-elevated); }
+
+.btn-accent {
+  background-color: #06b6d4;
+  color: #0f172a;
+}
+
+.file-upload-label {
+  position: relative;
+  overflow: hidden;
+}
+
+.hidden-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.btn.hidden { display: none; }
+
+/* ==========================================================================
+   JSON Output Section
+   ========================================================================== */
+.json-section {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--bg-surface-elevated);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.json-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.json-header h2 {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.btn-small {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.btn-small:hover { background: #475569; }
+
+#json-output {
+  background-color: var(--bg-code);
+  border: 1px solid #1e293b;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--text-accent);
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ==========================================================================
+   Desktop / Tablet Responsive Breakpoint
+   ========================================================================== */
+@media (min-width: 768px) {
+  .app-container {
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 16px;
+  }
+  .app-header { grid-column: 1 / -1; }
+  .viewport-wrapper { grid-column: 1; grid-row: 2 / 5; }
+  .camera-container { aspect-ratio: 4 / 3; height: 100%; }
+  .summary-hud { grid-column: 2; grid-row: 2; }
+  .controls-panel { grid-column: 2; grid-row: 3; }
+  .json-section { grid-column: 2; grid-row: 4; }
+}

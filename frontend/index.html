@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Real-time Vehicle, License Plate, Color and Person Detection PWA">
+  
+  <!-- PWA Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  
+  <title>AutoDetect POC — Vehicle & Person Recognition</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header & Status Bar -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="brand-icon">🚗</span>
+        <h1 class="brand-title">AutoDetect POC</h1>
+      </div>
+      <div class="header-status">
+        <span id="conn-status" class="status-badge status-online">● Ready</span>
+        <span id="fps-badge" class="status-badge status-latency">⚡ -- ms</span>
+      </div>
+    </header>
+
+    <!-- Main Viewport: Camera Video Feed & Overlaid Canvas -->
+    <main class="viewport-wrapper">
+      <div class="camera-container" id="camera-container">
+        <!-- Live Video Stream -->
+        <video id="camera-feed" playsinline autoplay muted></video>
+        
+        <!-- Overlaid Canvas for Bounding Boxes -->
+        <canvas id="overlay-canvas"></canvas>
+        
+        <!-- Live HUD Scanning Reticle -->
+        <div class="scanning-reticle" id="scanning-reticle"></div>
+        
+        <!-- Status & Permissions Banner -->
+        <div id="camera-alert" class="camera-alert hidden"></div>
+      </div>
+    </main>
+
+    <!-- Summary HUD Metrics -->
+    <section class="summary-hud">
+      <div class="metric-card">
+        <span class="metric-icon">🚘</span>
+        <div class="metric-info">
+          <span class="metric-label">Vehicles</span>
+          <span class="metric-value" id="val-vehicles">0</span>
+        </div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">🧍</span>
+        <div class="metric-info">
+          <span class="metric-label">Persons</span>
+          <span class="metric-value" id="val-persons">0</span>
+        </div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">🏷️</span>
+        <div class="metric-info">
+          <span class="metric-label">Plate</span>
+          <span class="metric-value metric-text" id="val-plates">—</span>
+        </div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">🎨</span>
+        <div class="metric-info">
+          <span class="metric-label">Color</span>
+          <span class="metric-value metric-text" id="val-colors">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Panel -->
+    <section class="controls-panel">
+      <button id="btn-toggle-cam" class="btn btn-primary" type="button">
+        <span class="btn-icon">📹</span> <span class="btn-text">Start Camera</span>
+      </button>
+      <button id="btn-manual-scan" class="btn btn-secondary" type="button">
+        <span class="btn-icon">⚡</span> <span class="btn-text">Analyze Frame</span>
+      </button>
+      <label for="file-input" class="btn btn-secondary file-upload-label">
+        <span class="btn-icon">📁</span> <span class="btn-text">Upload Image</span>
+        <input type="file" id="file-input" accept="image/*" class="hidden-input">
+      </label>
+      <button id="btn-install-pwa" class="btn btn-accent hidden" type="button">
+        <span class="btn-icon">📥</span> <span class="btn-text">Install App</span>
+      </button>
+    </section>
+
+    <!-- Live JSON Response Output Panel -->
+    <section class="json-section">
+      <div class="json-header">
+        <h2>Live API Response</h2>
+        <button id="btn-copy-json" class="btn-small" type="button">Copy JSON</button>
+      </div>
+      <pre id="json-output">Waiting for frame analysis...</pre>
+    </section>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
