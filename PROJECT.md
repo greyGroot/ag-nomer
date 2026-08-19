@@ -41,10 +41,10 @@ The system is a real-time Vehicle & Person Detection Progressive Web App (PWA) w
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
 | M0 | Scope Survey & Feature Inventory | Multi-explorer survey of requirements, backend, ML, frontend, and tests | None | DONE |
-| M1 | Backend Service & ML Pipeline | `requirements.txt`, `backend/main.py`, `backend/ml_service.py`, Basic Auth, Git commit M1 | M0 | PLANNED |
-| M2 | Frontend PWA Application | `frontend/index.html`, `frontend/style.css`, `frontend/app.js`, `frontend/manifest.json`, `frontend/sw.js`, Git commit M2 | M1 | PLANNED |
-| M3 | Automated E2E & Component Test Suite | `test_e2e.py` testing auth, static serving, app.js logic, `data/` images inference, Git commit M3 | M1, M2 | PLANNED |
-| M4 | Architectural Review, Adversarial Hardening & Forensic Audit | Architect review & refactor loop, Challenger adversarial validation, Forensic Auditor verification, Final Git commit | M3 | PLANNED |
+| M1 | Backend Service & ML Pipeline | `requirements.txt`, `backend/main.py`, `backend/ml_service.py`, Basic Auth, Git commit M1 | M0 | DONE |
+| M2 | Frontend PWA Application | `frontend/index.html`, `frontend/style.css`, `frontend/app.js`, `frontend/manifest.json`, `frontend/sw.js`, Git commit M2 | M1 | DONE |
+| M3 | Automated E2E & Component Test Suite | `test_e2e.py` testing auth, static serving, app.js logic, `data/` images inference, Git commit M3 | M1, M2 | DONE |
+| M4 | Architectural Review, Adversarial Hardening & Forensic Audit | Architect review & refactor loop, Challenger adversarial validation, Forensic Auditor verification, Final Git commit | M3 | DONE |
 
 ## Interface Contracts
 

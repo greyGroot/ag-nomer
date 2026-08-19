@@ -144,6 +144,35 @@ class TestMLServiceUnits(unittest.TestCase):
         self.assertEqual(VEHICLE_CLASS_IDS[5], "bus")
         self.assertEqual(VEHICLE_CLASS_IDS[7], "truck")
 
+    def test_06_extreme_aspect_ratio_and_micro_dimensions_padding_guard(self):
+        """Verify analyze_image handles micro dimensions (<4px) and extreme aspect ratios (>50:1) without OpenCV crash."""
+        # 1. Micro dimension: 2x2 image (min_dim < 4)
+        img_micro = Image.new("RGB", (2, 2), color=(255, 0, 0))
+        buf_micro = io.BytesIO()
+        img_micro.save(buf_micro, format="PNG")
+        res_micro = ml_service.analyze_image(buf_micro.getvalue())
+        self.assertEqual(res_micro["status"], "success")
+        self.assertTrue(res_micro["success"])
+        self.assertEqual(res_micro["vehicle_count"], 0)
+        self.assertEqual(res_micro["person_count"], 0)
+
+        # 2. Extreme vertical aspect ratio: 8x600 (min_dim < 32 and aspect_ratio > 50)
+        img_tall = Image.new("RGB", (8, 600), color=(100, 100, 100))
+        buf_tall = io.BytesIO()
+        img_tall.save(buf_tall, format="PNG")
+        res_tall = ml_service.analyze_image(buf_tall.getvalue())
+        self.assertEqual(res_tall["status"], "success")
+        self.assertTrue(res_tall["success"])
+
+        # 3. Extreme horizontal aspect ratio: 800x10 (aspect_ratio = 80 > 50)
+        img_wide = Image.new("RGB", (800, 10), color=(100, 100, 100))
+        buf_wide = io.BytesIO()
+        img_wide.save(buf_wide, format="PNG")
+        res_wide = ml_service.analyze_image(buf_wide.getvalue())
+        self.assertEqual(res_wide["status"], "success")
+        self.assertTrue(res_wide["success"])
+
+
 
 class TestSecurityAndAuthMiddleware(unittest.TestCase):
     """Tier 2: HTTP Basic Authentication & Security Shielding Tests."""
